@@ -16,9 +16,9 @@ const colors: string[] = [
   "#757575",
 ];
 
-type Props = { value: number; size: number };
+type Props = { value: number; size: number; isBomb: boolean };
 
-const Tile = ({ value, size }: Props) => {
+const Tile = ({ value, size, isBomb }: Props) => {
   const [clicked, setClicked] = useState(false);
   const [flagged, setFlagged] = useState(false);
 
@@ -33,6 +33,19 @@ const Tile = ({ value, size }: Props) => {
     setClicked(true);
   }
 
+  function showTileValue() {
+    if (clicked && isBomb) {
+      return <CoronavirusIcon />;
+    }
+    if (flagged) {
+      return <FlagIcon />;
+    }
+    if (clicked && value) {
+      return value;
+    }
+    return null; // output nothing
+  }
+
   return (
     <Box
       bgcolor="lightgray"
@@ -42,12 +55,13 @@ const Tile = ({ value, size }: Props) => {
       display="flex"
       justifyContent="center"
       fontSize={size * 4 + "%"}
-      boxShadow="0 0 0 3px gray"
+      // boxShadow="0 0 0 3px gray"
+      border="1.5px solid gray"
       onClick={onLeftClick}
       onContextMenu={onRightClick}
       color={clicked ? colors[value] : "red"}
     >
-      {clicked ? value || <CoronavirusIcon /> : flagged ? <FlagIcon /> : null}
+      {showTileValue()}
     </Box>
   );
 };
