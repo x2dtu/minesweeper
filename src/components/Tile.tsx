@@ -36,12 +36,24 @@ const Tile = ({ state, size, dispatch, x, y }: Props) => {
 
   function onRightClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     event.preventDefault();
-    setLocalState("flagged");
-    dispatch({ type: "flag", payload: { x, y } });
+    debugger;
+    if ((value === 0 && !isBomb) || (revealed && value)) return;
+    let locallyFlagged: boolean;
+    if (localState === "flagged") {
+      setLocalState(revealed ? "clicked" : "untouched");
+      locallyFlagged = false;
+    } else {
+      setLocalState("flagged");
+      locallyFlagged = true;
+    }
+    dispatch({
+      type: "flag",
+      payload: { x, y, locallyFlagged },
+    });
   }
 
   function onLeftClick() {
-    console.log("clicked");
+    if (localState === "flagged") return;
     setLocalState("clicked");
     dispatch({ type: "click", payload: { x, y } });
   }
@@ -59,9 +71,10 @@ const Tile = ({ state, size, dispatch, x, y }: Props) => {
     return null; // output nothing
   }
 
+  const emptyTile = revealed && !flagged && !isBomb && !value;
   return (
     <Box
-      bgcolor="lightgray"
+      bgcolor={emptyTile ? "#e0e0e0" : "lightgray"}
       width={size}
       height={size}
       alignItems="center"
@@ -72,7 +85,7 @@ const Tile = ({ state, size, dispatch, x, y }: Props) => {
       border="1.5px solid gray"
       onClick={onLeftClick}
       onContextMenu={onRightClick}
-      color={flagged ? "red" : colors[value]}
+      color={localState === "flagged" ? "red" : colors[value]}
     >
       {showTileValue()}
     </Box>
