@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import FlagIcon from "@mui/icons-material/Flag";
 import CoronavirusIcon from "@mui/icons-material/Coronavirus";
 import React, { useState } from "react";
+import { TileState, Action } from "../App";
 
 const colors: string[] = [
   "black",
@@ -16,31 +17,43 @@ const colors: string[] = [
   "#757575",
 ];
 
-type Props = { value: number; size: number; isBomb: boolean };
+type Props = {
+  state: TileState;
+  dispatch: React.Dispatch<Action>;
+  size: number;
+  x: number;
+  y: number;
+};
 
-const Tile = ({ value, size, isBomb }: Props) => {
-  const [clicked, setClicked] = useState(false);
-  const [flagged, setFlagged] = useState(false);
+type LocalState = "clicked" | "flagged" | "untouched";
+
+const Tile = ({ state, size, dispatch, x, y }: Props) => {
+  const { value, flagged, isBomb, revealed } = state;
+
+  const [localState, setLocalState] = useState<LocalState>(
+    flagged ? "flagged" : revealed ? "clicked" : "untouched"
+  );
 
   function onRightClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     event.preventDefault();
-    if (clicked) return;
-    setFlagged(!flagged);
+    setLocalState("flagged");
+    dispatch({ type: "flag", payload: { x, y } });
   }
 
   function onLeftClick() {
-    if (flagged) return;
-    setClicked(true);
+    console.log("clicked");
+    setLocalState("clicked");
+    dispatch({ type: "click", payload: { x, y } });
   }
 
   function showTileValue() {
-    if (clicked && isBomb) {
+    if (localState === "clicked" && isBomb) {
       return <CoronavirusIcon />;
     }
-    if (flagged) {
+    if (localState === "flagged") {
       return <FlagIcon />;
     }
-    if (clicked && value) {
+    if (localState === "clicked" && value) {
       return value;
     }
     return null; // output nothing
@@ -59,7 +72,7 @@ const Tile = ({ value, size, isBomb }: Props) => {
       border="1.5px solid gray"
       onClick={onLeftClick}
       onContextMenu={onRightClick}
-      color={clicked ? colors[value] : "red"}
+      color={flagged ? "red" : colors[value]}
     >
       {showTileValue()}
     </Box>
