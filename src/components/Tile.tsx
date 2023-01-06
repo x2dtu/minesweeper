@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import FlagIcon from "@mui/icons-material/Flag";
 import CoronavirusIcon from "@mui/icons-material/Coronavirus";
 import React, { useState } from "react";
-import { TileState, Action } from "../App";
+import { TileState, Action } from "./Game";
 
 const colors: string[] = [
   "black",
@@ -37,7 +37,7 @@ const Tile = ({ state, size, dispatch, x, y }: Props) => {
   function onRightClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     event.preventDefault();
     debugger;
-    if ((value === 0 && !isBomb) || (revealed && value)) return;
+    if (revealed) return;
     let locallyFlagged: boolean;
     if (localState === "flagged") {
       setLocalState(revealed ? "clicked" : "untouched");
@@ -71,10 +71,9 @@ const Tile = ({ state, size, dispatch, x, y }: Props) => {
     return null; // output nothing
   }
 
-  const emptyTile = revealed && !flagged && !isBomb && !value;
   return (
     <Box
-      bgcolor={emptyTile ? "#e0e0e0" : "lightgray"}
+      bgcolor={revealed ? "lightgray" : "#e0e0e0"}
       width={size}
       height={size}
       alignItems="center"
