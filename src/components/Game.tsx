@@ -228,6 +228,7 @@ function App({ menuCallback, difficulty }: Props) {
       return { ...state, dialogOpen: true };
     }
   }
+  const [gridRowCount, gridColCount] = [12, 30];
   const numBombs =
     difficulty === "easy" ? 30 : difficulty === "medium" ? 50 : 70;
 
@@ -239,7 +240,6 @@ function App({ menuCallback, difficulty }: Props) {
       flagged: false,
       value: 0,
     };
-    const [gridRowCount, gridColCount] = [12, 30];
     const initialGrid: TileState[][] = Array.from(
       {
         length: gridRowCount,
@@ -291,33 +291,41 @@ function App({ menuCallback, difficulty }: Props) {
 
   const keyObj = useRef(0);
 
-  const tileSize = 50;
-
   function onDialogClose() {
     dispatch({ type: "play-again", payload: null });
   }
 
   // create list of tiles from value grid
-  const tiles: JSX.Element[] = state.grid
-    .map((row, rowIndex) =>
-      row.map((tileState, colIndex) => (
+  const tiles: JSX.Element[] = state.grid.map((row, rowIndex) => (
+    <Box display="flex">
+      {row.map((tileState, colIndex) => (
         <Tile
           state={tileState}
-          size={tileSize}
           dispatch={dispatch}
           key={keyObj.current++}
           x={rowIndex}
           y={colIndex}
         />
-      ))
-    )
-    .flat();
+      ))}
+    </Box>
+  ));
 
   return (
     <div className="App">
-      <Stack display="flex" m={2} spacing={2}>
-        <Box pr={1} marginLeft="auto">{`Bombs Left: ${state.bombsLeft}`}</Box>
-        <Box display="flex" width="max-content" maxWidth="100%" flexWrap="wrap">
+      <Stack display="flex" m={2} spacing={2} overflow="auto">
+        <Box
+          style={{ position: "fixed", right: 0 }}
+          pr={2}
+          display="flex"
+          justifyContent="flex-end"
+        >{`Bombs Left: ${state.bombsLeft}`}</Box>
+        <Box
+          pt={2}
+          display="flex"
+          width="max-content"
+          maxWidth="100%"
+          flexWrap="wrap"
+        >
           {tiles}
         </Box>
         <Dialog open={state.dialogOpen} onClose={() => onDialogClose()}>

@@ -4,6 +4,7 @@ import FlagIcon from "@mui/icons-material/Flag";
 import CoronavirusIcon from "@mui/icons-material/Coronavirus";
 import React, { useState } from "react";
 import { TileState, Action } from "./Game";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 const colors: string[] = [
   "black",
@@ -20,14 +21,13 @@ const colors: string[] = [
 type Props = {
   state: TileState;
   dispatch: React.Dispatch<Action>;
-  size: number;
   x: number;
   y: number;
 };
 
 type LocalState = "clicked" | "flagged" | "untouched";
 
-const Tile = ({ state, size, dispatch, x, y }: Props) => {
+const Tile = ({ state, dispatch, x, y }: Props) => {
   const { value, flagged, isBomb, revealed } = state;
 
   const [localState, setLocalState] = useState<LocalState>(
@@ -36,7 +36,6 @@ const Tile = ({ state, size, dispatch, x, y }: Props) => {
 
   function onRightClick(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     event.preventDefault();
-    debugger;
     if (revealed) return;
     let locallyFlagged: boolean;
     if (localState === "flagged") {
@@ -70,6 +69,10 @@ const Tile = ({ state, size, dispatch, x, y }: Props) => {
     }
     return null; // output nothing
   }
+
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up("md"));
+  const size = matches ? 50 : 30;
 
   return (
     <Box

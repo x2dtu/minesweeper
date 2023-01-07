@@ -19,7 +19,11 @@ const Menu = ({ menuCallback, difficultyCallback }: Props) => {
       alignItems="center"
       spacing={1}
     >
-      <Typography variant="h1" gutterBottom pt={5}>
+      <Typography
+        sx={{ typography: { md: "h1", xs: "h3" }, width: { sx: "75%" } }}
+        gutterBottom
+        pt={5}
+      >
         Welcome to Minesweeper
       </Typography>
       <Typography gutterBottom>Select a difficulty:</Typography>
@@ -29,7 +33,6 @@ const Menu = ({ menuCallback, difficultyCallback }: Props) => {
         spacing={6}
         marginLeft="auto"
         marginRight="auto"
-        p={1}
         pb={6}
       >
         {difficulties.map((diff) => (
