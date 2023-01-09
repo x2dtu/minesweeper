@@ -1,13 +1,16 @@
-import { Box } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Stack } from "@mui/system";
-import { useReducer, useRef } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import { Difficulty } from "../App";
 import Tile from "./Tile";
+import { styled } from "@mui/material/styles";
+import TimerOutlinedIcon from "@mui/icons-material/TimerOutlined";
+import Flag from "@mui/icons-material/Flag";
 
 function shuffleArray(array: TileState[][]) {
   for (let row = array.length - 1; row > 0; row--) {
@@ -124,6 +127,17 @@ function revealUnflaggedBombs(grid: TileState[][]) {
     }
   }
 }
+
+const InfoBox = styled(Paper)({
+  backgroundColor: "#e0e0e0",
+  padding: "0.5em 2.5em",
+  display: "flex",
+  width: "7em",
+  // borderRadius: "50%",
+  elevaton: 10,
+  justifyContent: "space-evenly",
+  margin: "0 3em",
+}) as typeof Paper;
 
 type Props = { menuCallback: () => void; difficulty: Difficulty };
 
@@ -291,6 +305,16 @@ function App({ menuCallback, difficulty }: Props) {
 
   const keyObj = useRef(0);
 
+  const [timeElapsed, setTimeElapsed] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(
+      () => setTimeElapsed((time) => time + 1),
+      1000
+    );
+    return () => clearInterval(interval);
+  }, []);
+
   function onDialogClose() {
     dispatch({ type: "play-again", payload: null });
   }
@@ -314,13 +338,25 @@ function App({ menuCallback, difficulty }: Props) {
     <div className="App">
       <Stack display="flex" m={2} spacing={2} overflow="auto">
         <Box
-          style={{ position: "fixed", right: 0 }}
-          pr={2}
+          style={{
+            position: "fixed",
+            left: "50%",
+            transform: "translate(-50%, 0)",
+          }}
           display="flex"
-          justifyContent="flex-end"
-        >{`Bombs Left: ${state.bombsLeft}`}</Box>
+          justifyContent="center"
+        >
+          <InfoBox>
+            <TimerOutlinedIcon />
+            <Typography sx={{ pl: 1.5 }}>{timeElapsed}</Typography>{" "}
+          </InfoBox>
+          <InfoBox>
+            <Flag sx={{ color: "red" }} />
+            <Typography sx={{ pl: 1.5 }}>{state.bombsLeft}</Typography>
+          </InfoBox>
+        </Box>
         <Box
-          pt={2}
+          pt={6}
           display="flex"
           width="max-content"
           maxWidth="100%"

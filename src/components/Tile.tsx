@@ -73,6 +73,7 @@ const Tile = ({ state, dispatch, x, y }: Props) => {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("md"));
   const size = matches ? 50 : 30;
+  const stroke = matches ? 1.5 : 0.5;
 
   return (
     <Box
@@ -83,8 +84,7 @@ const Tile = ({ state, dispatch, x, y }: Props) => {
       display="flex"
       justifyContent="center"
       fontSize={size * 4 + "%"}
-      // boxShadow="0 0 0 3px gray"
-      border="1.5px solid gray"
+      border={`${stroke}px solid gray`}
       onClick={onLeftClick}
       onContextMenu={onRightClick}
       color={localState === "flagged" ? "red" : colors[value]}
