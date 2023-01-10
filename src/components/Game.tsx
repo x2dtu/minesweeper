@@ -5,7 +5,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { Stack } from "@mui/system";
-import { useEffect, useReducer, useRef, useState } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { Difficulty } from "../App";
 import Tile from "./Tile";
 import { styled } from "@mui/material/styles";
@@ -54,6 +54,10 @@ export type Action =
   | {
       type: "play-again";
       payload: null;
+    }
+  | {
+      type: "increment-time";
+      payload: null;
     };
 
 type GameResult = "win" | "loss";
@@ -64,6 +68,7 @@ type State = {
   trueBombsLeft: number; // how many bombs are actually left
   dialogOpen: boolean;
   gameResult: GameResult;
+  timeElapsed: number;
 };
 
 export type TileState = {
@@ -233,8 +238,13 @@ function App({ menuCallback, difficulty }: Props) {
           return { ...state };
         }
         case "play-again": {
-          setTimeElapsed(0);
           return initState();
+        }
+        case "increment-time": {
+          return {
+            ...state,
+            timeElapsed: state.timeElapsed + 1,
+          };
         }
       }
     } catch (error) {
@@ -299,6 +309,7 @@ function App({ menuCallback, difficulty }: Props) {
       trueBombsLeft: numBombs,
       dialogOpen: false,
       gameResult: "loss", // loss is default
+      timeElapsed: 0,
     };
   }
 
@@ -306,11 +317,9 @@ function App({ menuCallback, difficulty }: Props) {
 
   const keyObj = useRef(0);
 
-  const [timeElapsed, setTimeElapsed] = useState(0);
-
   useEffect(() => {
     const interval = setInterval(
-      () => setTimeElapsed((time) => time + 1),
+      () => dispatch({ type: "increment-time", payload: null }),
       1000
     );
     return () => clearInterval(interval);
@@ -349,7 +358,7 @@ function App({ menuCallback, difficulty }: Props) {
         >
           <InfoBox>
             <TimerOutlinedIcon />
-            <Typography sx={{ pl: 1.5 }}>{timeElapsed}</Typography>{" "}
+            <Typography sx={{ pl: 1.5 }}>{state.timeElapsed}</Typography>{" "}
           </InfoBox>
           <InfoBox>
             <Flag sx={{ color: "red" }} />
