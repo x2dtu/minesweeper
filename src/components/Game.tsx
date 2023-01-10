@@ -233,6 +233,7 @@ function App({ menuCallback, difficulty }: Props) {
           return { ...state };
         }
         case "play-again": {
+          setTimeElapsed(0);
           return initState();
         }
       }
